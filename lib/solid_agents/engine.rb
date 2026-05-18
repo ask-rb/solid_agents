@@ -10,6 +10,21 @@ module SolidAgents
       SolidAgents.discover_tools!
     end
 
+    initializer "solid_agents.register_schedules", before: :eager_load do
+      ActiveSupport.on_load(:after_initialize) do
+        next unless defined?(SolidQueue) && SolidAgents::Schedule.table_exists?
+
+        SolidAgents::Schedule.enabled.find_each do |schedule|
+          SolidQueue::RecurringSchedule.find_or_initialize_by(key: "solid_agents_#{schedule.key}") do |s|
+            s.schedule = schedule.cron
+            s.arguments = -> { [ schedule.id ] }
+            s.job_class = "SolidAgents::ScheduledRunJob"
+            s.description = schedule.prompt.truncate(100)
+          end
+        end
+      end
+    end
+
     initializer "solid_agents.error_subscriber" do
       Rails.error.subscribe(SolidAgents::ErrorSubscriber.new) if SolidAgents.auto_fix_enabled
     end
