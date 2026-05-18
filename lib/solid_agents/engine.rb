@@ -10,6 +10,10 @@ module SolidAgents
       SolidAgents.discover_tools!
     end
 
+    initializer "solid_agents.error_subscriber" do
+      Rails.error.subscribe(SolidAgents::ErrorSubscriber.new) if SolidAgents.auto_fix_enabled
+    end
+
     initializer "solid_agents.configure_llm" do
       key = ENV["OPENROUTER_API_KEY"] || ENV["SOLID_AGENTS_API_KEY"]
       base = ENV["OPENROUTER_API_BASE"] || ENV["SOLID_AGENTS_API_BASE"]

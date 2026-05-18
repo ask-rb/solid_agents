@@ -12,6 +12,7 @@ module SolidAgents
   mattr_accessor :default_provider, default: :openrouter
   mattr_accessor :max_turns, default: 25
   mattr_accessor :system_prompt
+  mattr_accessor :auto_fix_enabled, default: false
 
   class << self
     def discover_tools!

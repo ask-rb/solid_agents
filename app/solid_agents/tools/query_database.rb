@@ -15,9 +15,10 @@ module SolidAgents
 
         pool = ActiveRecord::Base.connection_pool
         pool.with_connection do |conn|
-          result = conn.execute(conn.sanitize_limit(sql, limit))
-          columns = result.fields
-          rows = result.to_a.first(limit)
+          limited_sql = sql.match?(/\bLIMIT\b/i) ? sql : "#{sql.chomp(';')} LIMIT #{limit.to_i}"
+          result = conn.exec_query(limited_sql)
+          columns = result.columns
+          rows = result.rows.first(limit)
           { columns: columns, rows: rows, count: rows.size }
         end
       rescue ActiveRecord::StatementInvalid => e

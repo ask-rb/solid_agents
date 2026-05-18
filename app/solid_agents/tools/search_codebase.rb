@@ -30,7 +30,7 @@ module SolidAgents
         cmd = ["rg", "--no-heading", "--line-number", "--max-count", "3", "-i", term.to_s, dir.to_s]
         cmd.concat ["--type-add", "ruby:*.{rb,rake}", "--type", "ruby"] if ext == "rb"
         cmd.concat ["--glob", "*.{#{ext}}"] if ext
-        cmd.concat ["--max-files", max.to_s] if max
+        cmd.concat ["--max-count", "3"]
 
         `#{Shellwords.join(cmd)}`.lines.first(max).map { |l| l.chomp.split(":", 3).then { |parts| { file: parts[0], line: parts[1].to_i, match: parts[2]&.strip } } }
       end

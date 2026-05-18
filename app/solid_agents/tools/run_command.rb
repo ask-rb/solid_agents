@@ -13,8 +13,7 @@ module SolidAgents
         dir = workdir ? Rails.root.join(workdir) : Rails.root
         output, error, status = Open3.capture3(
           { "RAILS_ENV" => Rails.env }, command,
-          chdir: dir.to_s,
-          timeout: timeout
+          chdir: dir.to_s
         )
 
         {
