@@ -1,0 +1,49 @@
+<div class="chat-layout">
+  <aside class="sidebar">
+    <div class="card sidebar-header">
+      <h2>Sessions</h2>
+      <%= form_with url: sessions_path, method: :post, class: "new-session-form" do |f| %>
+        <%= f.text_field :message, placeholder: "New session prompt...", class: "input" %>
+        <%= f.submit "Start", class: "btn primary" %>
+      <% end %>
+    </div>
+    <div class="session-list">
+      <% @sessions.each do |session| %>
+        <%= link_to session_path(session), class: "session-item #{'active' if defined?(@session) && @session == session}" do %>
+          <span class="session-title"><%= session.prompt.to_s.truncate(50) %></span>
+          <span class="session-meta"><%= time_ago_tag(session.created_at) %></span>
+        <% end %>
+      <% end %>
+    </div>
+  </aside>
+
+  <main class="chat-main">
+    <% if defined?(@session) && @session %>
+      <div class="chat-messages">
+        <div class="message user">
+          <div class="message-content"><%= simple_format(@session.prompt) %></div>
+        </div>
+        <% if @session.output.present? %>
+          <div class="message assistant">
+            <div class="message-content"><%= simple_format(@session.output) %></div>
+          </div>
+        <% end %>
+        <% if @session.failed? %>
+          <div class="message error">
+            <div class="message-content">Error: <%= @session.error_payload&.dig("error") %></div>
+          </div>
+        <% end %>
+      </div>
+
+      <%= form_with url: sessions_path, method: :post, class: "chat-input" do |f| %>
+        <%= f.text_field :message, placeholder: "Ask anything about your Rails app...", class: "input", autofocus: true %>
+        <%= f.submit "Send", class: "btn primary" %>
+      <% end %>
+    <% else %>
+      <div class="empty-state">
+        <h2>What would you like to do?</h2>
+        <p>Ask me anything about your Rails app — schema, errors, code, or deploy.</p>
+      </div>
+    <% end %>
+  </main>
+</div>

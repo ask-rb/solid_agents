@@ -1,6 +1,8 @@
 en:
   solid_agents:
+    sessions:
+      title: "Sessions"
     runs:
-      title: "Agent Runs"
-    agents:
-      title: "Agents"
+      title: "Runs"
+    schedules:
+      title: "Schedules"

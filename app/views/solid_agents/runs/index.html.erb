@@ -4,24 +4,20 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>Agent</th>
-        <th>Status</th>
-        <th>Stage</th>
-        <th>Owner</th>
-        <th>Runtime</th>
         <th>Source</th>
+        <th>Status</th>
+        <th>Prompt</th>
+        <th>Started</th>
       </tr>
     </thead>
     <tbody>
       <% @runs.each do |run| %>
         <tr>
           <td><%= link_to "##{run.id}", run_path(run) %></td>
-          <td><%= run.agent&.key %></td>
+          <td><%= run.source_type %></td>
           <td><span class="badge <%= status_badge_class(run.status) %>"><%= run.status %></span></td>
-          <td><%= run.stage %></td>
-          <td><%= run.stage_owner %></td>
-          <td><%= run.runtime %></td>
-          <td><%= [run.source_type, run.source_id].compact.join("#") %></td>
+          <td><%= run.prompt.to_s.truncate(60) %></td>
+          <td><%= time_ago_tag(run.created_at) %></td>
         </tr>
       <% end %>
     </tbody>

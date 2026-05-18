@@ -1,19 +1,20 @@
 <div class="card">
   <h2>Run #<%= @run.id %></h2>
   <p>
-    Agent: <strong><%= @run.agent.key %></strong> |
-    Runtime: <strong><%= @run.runtime %></strong> |
-    Status: <span class="badge <%= status_badge_class(@run.status) %>"><%= @run.status %></span>
+    Status: <span class="badge <%= status_badge_class(@run.status) %>"><%= @run.status %></span> |
+    Source: <%= @run.source_type %> |
+    Runtime: <%= @run.runtime %>
   </p>
-  <p>
-    Stage: <strong><%= @run.stage %></strong> |
-    Owner: <strong><%= @run.stage_owner %></strong> |
-    Board Column: <strong><%= @run.work_item&.column_key || @run.stage %></strong>
-  </p>
-  <p>
-    Source: <%= [@run.source_type, @run.source_id].compact.join("#") %>
-  </p>
-  <%= button_to "Retry", retry_run_path(@run), method: :post, class: "btn primary" %>
+
+  <% if @run.prompt.present? %>
+    <h3>Prompt</h3>
+    <pre><%= @run.prompt %></pre>
+  <% end %>
+
+  <% if @run.output.present? %>
+    <h3>Response</h3>
+    <pre><%= @run.output %></pre>
+  <% end %>
 </div>
 
 <div class="grid">
@@ -44,12 +45,12 @@
   <div class="card">
     <h3>Artifacts</h3>
     <% @artifacts.each do |artifact| %>
-      <h4><%= artifact.kind %> - <%= artifact.label %></h4>
+      <h4><%= artifact.label || artifact.kind %></h4>
       <% if artifact.content_text.present? %>
         <pre><%= artifact.content_text %></pre>
-      <% else %>
-        <pre><%= artifact.content_json %></pre>
       <% end %>
     <% end %>
   </div>
 </div>
+
+<%= button_to "Retry", retry_run_path(@run), method: :post, class: "btn" %>

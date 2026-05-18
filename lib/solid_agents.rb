@@ -1,36 +1,42 @@
 # frozen_string_literal: true
 
+require "ruby_llm"
+require "ruby_llm/conductor"
 require_relative "solid_agents/version"
-require_relative "solid_agents/workflow"
-require_relative "solid_agents/runtime/adapter"
-require_relative "solid_agents/runtime/ruby_llm_adapter"
 require_relative "solid_agents/engine"
 
 module SolidAgents
-  mattr_accessor :connects_to
+  mattr_accessor :discovered_tools, default: []
   mattr_accessor :base_controller_class, default: "::ActionController::Base"
-  mattr_accessor :default_runtime, default: :ruby_llm
-  mattr_accessor :default_model, default: "minimax/minimax-m2.7"
+  mattr_accessor :default_model, default: "gpt-4o"
   mattr_accessor :default_provider, default: :openrouter
-  mattr_accessor :openrouter_api_key
-  mattr_accessor :openrouter_api_base
-  mattr_accessor :default_test_command, default: "bin/rails test"
-  mattr_accessor :max_iterations, default: 8
+  mattr_accessor :max_turns, default: 25
+  mattr_accessor :system_prompt
 
   class << self
-    def runtime_adapter(runtime)
-      case runtime.to_sym
-      when :ruby_llm then SolidAgents::Runtime::RubyLlmAdapter.new
-      else
-        raise ArgumentError, "Unsupported runtime: #{runtime.inspect}"
-      end
+    def discover_tools!
+      self.discovered_tools = SolidAgents::Tools::Base.descendants
     end
 
-    def dispatch_error(source:, agent_key: "alex")
-      SolidAgents::Runs::Dispatch.call(source: source, agent_key: agent_key)
+    def conductor_session(**extra)
+      tools = self.discovered_tools.map(&:new) + (extra.delete(:extra_tools) || [])
+      RubyLLM::Conductor::Session.new(
+        model: default_model,
+        max_turns: max_turns,
+        system_prompt: system_prompt,
+        provider: default_provider,
+        parallel_tools: true,
+        tools: tools,
+        **extra
+      )
     end
   end
 end
 
-require_relative "../app/tools/solid_agents/tools/workflow_guide_tool"
-require_relative "../app/solid_agents/agents"
+require_relative "solid_agents/tools/base"
+require_relative "../app/models/solid_agents/record"
+require_relative "../app/models/solid_agents/run"
+require_relative "../app/models/solid_agents/run_event"
+require_relative "../app/models/solid_agents/artifact"
+require_relative "../app/models/solid_agents/schedule"
+require_relative "../app/models/solid_agents/config"

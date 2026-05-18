@@ -10,10 +10,11 @@
   <body>
     <header class="topbar">
       <div class="wrap">
-        <h1>SolidAgents</h1>
+        <h1><%= link_to "SolidAgents", root_path %></h1>
         <nav>
+          <%= link_to "Sessions", sessions_path %>
           <%= link_to "Runs", runs_path %>
-          <%= link_to "Agents", agents_path %>
+          <%= link_to "Schedules", schedules_path %>
         </nav>
       </div>
     </header>

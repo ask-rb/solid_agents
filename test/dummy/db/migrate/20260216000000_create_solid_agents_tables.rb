@@ -1,34 +1,12 @@
 # frozen_string_literal: true
 
-class CreateSolidAgentsTables < ActiveRecord::Migration[6.1]
+class CreateSolidAgentsTables < ActiveRecord::Migration[7.1]
   def change
-    create_table :solid_agents_agents do |t|
-      t.string :key, null: false
-      t.string :name, null: false
-      t.string :role, null: false, default: "alex"
-      t.string :runtime, null: false, default: "ruby_llm"
-      t.boolean :enabled, null: false, default: true
-      t.string :environment
-      t.string :model
-      t.text :system_prompt
-      t.json :capabilities_json, default: {}
-      t.string :working_directory
-      t.integer :timeout_seconds, null: false, default: 900
-      t.integer :max_iterations, null: false, default: 8
-      t.timestamps
-    end
-
-    add_index :solid_agents_agents, [:key, :environment], unique: true
-
     create_table :solid_agents_runs do |t|
-      t.references :agent, null: false, foreign_key: {to_table: :solid_agents_agents}
       t.string :external_key
       t.string :source_type, null: false
       t.bigint :source_id
-      t.string :error_fingerprint
       t.string :status, null: false, default: "queued"
-      t.string :stage, null: false, default: "received"
-      t.string :stage_owner, null: false, default: "alex"
       t.string :runtime, null: false, default: "ruby_llm"
       t.string :environment, null: false
       t.string :repo_path
@@ -37,45 +15,20 @@ class CreateSolidAgentsTables < ActiveRecord::Migration[6.1]
       t.string :commit_sha
       t.string :pr_url
       t.integer :pr_number
-      t.string :test_command
       t.integer :attempt_count, null: false, default: 0
-      t.integer :max_iterations
-      t.datetime :started_at
-      t.datetime :finished_at
+      t.text :prompt
+      t.text :output
       t.json :prompt_payload, default: {}
       t.json :result_payload, default: {}
       t.json :error_payload, default: {}
+      t.datetime :started_at
+      t.datetime :finished_at
       t.timestamps
     end
 
     add_index :solid_agents_runs, :external_key, unique: true
     add_index :solid_agents_runs, :status
-    add_index :solid_agents_runs, :stage
-    add_index :solid_agents_runs, :error_fingerprint
     add_index :solid_agents_runs, [:source_type, :source_id]
-
-    create_table :solid_agents_work_items do |t|
-      t.references :run, null: false, foreign_key: {to_table: :solid_agents_runs}
-      t.string :column_key, null: false, default: "received"
-      t.string :title, null: false
-      t.text :summary
-      t.json :metadata_json, default: {}
-      t.timestamps
-    end
-
-    add_index :solid_agents_work_items, :column_key
-
-    create_table :solid_agents_handoffs do |t|
-      t.references :run, null: false, foreign_key: {to_table: :solid_agents_runs}
-      t.string :stage, null: false
-      t.string :from_agent, null: false
-      t.string :to_agent, null: false
-      t.text :note
-      t.json :payload, default: {}
-      t.timestamps
-    end
-
-    add_index :solid_agents_handoffs, [:run_id, :stage]
 
     create_table :solid_agents_run_events do |t|
       t.references :run, null: false, foreign_key: {to_table: :solid_agents_runs}
@@ -89,30 +42,26 @@ class CreateSolidAgentsTables < ActiveRecord::Migration[6.1]
     end
 
     add_index :solid_agents_run_events, [:run_id, :sequence], unique: true
-    add_index :solid_agents_run_events, :event_type
 
     create_table :solid_agents_artifacts do |t|
       t.references :run, null: false, foreign_key: {to_table: :solid_agents_runs}
       t.string :kind, null: false
       t.string :label
       t.string :storage_type, null: false
-      t.string :storage_ref
       t.text :content_text
       t.json :content_json, default: {}
-      t.string :sha256
-      t.bigint :byte_size
       t.timestamps
     end
 
-    add_index :solid_agents_artifacts, :kind
-
-    create_table :solid_agents_configs do |t|
+    create_table :solid_agents_schedules do |t|
       t.string :key, null: false
-      t.string :environment
-      t.json :value_json, default: {}
+      t.string :cron, null: false
+      t.text :prompt, null: false
+      t.string :model
+      t.boolean :enabled, null: false, default: true
       t.timestamps
     end
 
-    add_index :solid_agents_configs, [:key, :environment], unique: true
+    add_index :solid_agents_schedules, :key, unique: true
   end
 end

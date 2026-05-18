@@ -4,7 +4,9 @@ module SolidAgents
   class Record < ActiveRecord::Base
     self.abstract_class = true
 
-    connects_to(**SolidAgents.connects_to) if SolidAgents.connects_to
+    if SolidAgents.respond_to?(:connects_to) && SolidAgents.connects_to.present?
+      connects_to(**SolidAgents.connects_to)
+    end
   end
 end
 

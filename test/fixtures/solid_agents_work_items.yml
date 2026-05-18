@@ -1,8 +1,0 @@
-received_item:
-  run_id: <%= ActiveRecord::FixtureSet.identify(:received_run) %>
-  column_key: received
-  title: Fix SolidErrors::Error#100
-  summary: Automated error-fixing pipeline
-  metadata_json: {}
-  created_at: <%= Time.current %>
-  updated_at: <%= Time.current %>

@@ -1,9 +1,0 @@
-initial_handoff:
-  run_id: <%= ActiveRecord::FixtureSet.identify(:received_run) %>
-  stage: received
-  from_agent: alex
-  to_agent: betty
-  note: seeded handoff
-  payload: {}
-  created_at: <%= Time.current %>
-  updated_at: <%= Time.current %>

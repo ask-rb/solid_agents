@@ -1,0 +1,38 @@
+<div class="card">
+  <h2>Schedules</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Key</th>
+        <th>Cron</th>
+        <th>Prompt</th>
+        <th>Enabled</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @schedules.each do |schedule| %>
+        <tr>
+          <td><%= schedule.key %></td>
+          <td><code><%= schedule.cron %></code></td>
+          <td><%= schedule.prompt.truncate(50) %></td>
+          <td><%= schedule.enabled? ? "Yes" : "No" %></td>
+          <td>
+            <%= link_to "Edit", edit_schedule_path(schedule) %>
+            <%= button_to "Delete", schedule_path(schedule), method: :delete, class: "link-button" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <h3>New Schedule</h3>
+  <%= form_with model: Schedule.new, url: schedules_path, class: "schedule-form" do |f| %>
+    <p><%= f.label :key %><br><%= f.text_field :key %></p>
+    <p><%= f.label :cron, "Cron expression" %><br><%= f.text_field :cron, placeholder: "0 9 * * 1" %></p>
+    <p><%= f.label :prompt %><br><%= f.text_area :prompt, rows: 3 %></p>
+    <p><%= f.label :enabled %><br><%= f.check_box :enabled, checked: true %></p>
+    <%= f.submit "Create", class: "btn primary" %>
+  <% end %>
+</div>
