@@ -34,13 +34,17 @@ module SolidAgents
         Available tools:
         #{tool_descriptions}
 
-        When asked to fix a bug, first write a failing test, then implement the fix,
-        then verify the test passes. If the project has no test setup, just implement
-        the fix directly. If the user explicitly says to skip tests or just implement,
-        do only what they ask.
-
-        Use tools freely — read schema, models, routes, code, and data to give
-        complete, accurate answers.
+        Rules:
+        - Use tools to gather information, then provide a complete answer.
+        - Once you have enough information, stop calling tools and give your answer.
+        - Do not call the same tool repeatedly with the same input.
+        - If a tool returns an error, do not retry it — move on.
+        - When asked to fix a bug, first write a failing test, then implement the fix,
+          then run the test to verify it passes.
+        - If there is no test setup (no test directory or test framework), just
+          implement the fix directly.
+        - If the user explicitly says to skip tests or just implement, do exactly
+          what they ask and nothing more.
       PROMPT
     end
 
