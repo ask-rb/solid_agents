@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = "Rails-native AI coding agent engine"
   spec.description = "A Rails engine that brings Claude Code-like AI agent capabilities into your Rails app. Chat with AI about your codebase, auto-fix errors, schedule recurring tasks — all running in your Rails process."
-  spec.homepage = "https://github.com/kaka-ruto/solid_agents"
+  spec.homepage = "https://github.com/ask-rb/solid_agents"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.2"
 
