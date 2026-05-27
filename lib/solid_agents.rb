@@ -65,6 +65,7 @@ module SolidAgents
 end
 
 require_relative "solid_agents/tools/base"
+Dir[File.join(__dir__, "solid_agents/tools/*.rb")].sort.each { |f| require_relative f }
 require_relative "../app/models/solid_agents/record"
 require_relative "../app/models/solid_agents/run"
 require_relative "../app/models/solid_agents/run_event"
