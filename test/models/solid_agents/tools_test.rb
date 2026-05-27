@@ -108,7 +108,7 @@ class ToolsTest < ActiveSupport::TestCase
 
   test "all tools are discoverable" do
     expected = %w[
-      CreatePR QueryDatabase ReadError ReadFile ReadLog
+      QueryDatabase ReadError ReadFile ReadLog
       ReadModel ReadRoute ReadSchema RunCommand SearchCodebase
     ]
     names = SolidAgents.discovered_tools.map { |t| t.name.demodulize }
